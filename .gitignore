@@ -1,0 +1,14 @@
+*.pyc
+*.swp
+.idea/*
+.vscode/*
+__pycache__/*
+tmp/*
+*.egg-info/
+build/*
+dist/*
+.ninja*
+build.ninja
+*.so
+*.o
+lightning_logs/*

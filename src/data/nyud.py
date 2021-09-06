@@ -81,20 +81,20 @@ class NYUD(torch.utils.data.Dataset):
             self.im_ids.append(line.rstrip('\n'))
 
             # Edges
-            _edge = os.path.join(self.root, _edge_gt_dir, line + '.png')
+            _edge = os.path.join(_edge_gt_dir, line + '.png')
             assert os.path.isfile(_edge)
             self.edges.append(_edge)
 
             # Semantic Segmentation
-            _semseg = os.path.join(self.root, _semseg_gt_dir, line + '.png')
+            _semseg = os.path.join(_semseg_gt_dir, line + '.png')
             assert os.path.isfile(_semseg)
             self.semsegs.append(_semseg)
 
-            _normal = os.path.join(self.root, _normal_gt_dir, line + '.png')
+            _normal = os.path.join(_normal_gt_dir, line + '.png')
             assert os.path.isfile(_normal)
             self.normals.append(_normal)
 
-            _depth = os.path.join(self.root, _depth_gt_dir, line + '.npy')
+            _depth = os.path.join(_depth_gt_dir, line + '.npy')
             assert os.path.isfile(_depth)
             self.depths.append(_depth)
 

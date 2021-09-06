@@ -59,7 +59,7 @@ The evaluation of boundary detection is disabled, since the MATLAB-based [SEISM]
 ## Citation
 
 If you find this code useful in your research, please consider citing the paper:
-```
+```bibtex
 @InProceedings{bruggemann2020exploring,
   Title     = {Exploring Relational Context for Multi-Task Dense Prediction},
   Author    = {Bruggemann, David and Kanakis, Menelaos and Obukhov, Anton and Georgoulis, Stamatios and Van Gool, Luc},

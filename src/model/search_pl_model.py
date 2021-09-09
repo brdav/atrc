@@ -122,6 +122,9 @@ class MultiTaskSearchModel(pl.LightningModule):
             with open(os.path.join(self.logger.log_dir, 'atrc_genotype.json'), 'w') as f:
                 json.dump({'data': atrc_genotype, 'step': self.global_step}, f)
 
+    test_step = validation_step
+    test_epoch_end = validation_epoch_end
+
     def configure_optimizers(self):
         optimizer_weights = torch.optim.SGD(lr=self.lr,
                                             momentum=0.9,

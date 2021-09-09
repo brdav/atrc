@@ -74,19 +74,16 @@ class DataModule(pl.LightningDataModule):
             }
         }
 
-        if stage == 'fit' or stage is None:
-            self.trainset = self.dataset_cls(self.data_dir,
-                                             split='train',
-                                             tasks=self.tasks,
-                                             transforms=self.train_transforms)
-            self.validset = self.dataset_cls(self.data_dir,
-                                             split='val',
-                                             tasks=self.tasks,
-                                             transforms=self.valid_transforms,
-                                             retname=True)
-            self.normals_centroids = self.trainset.normals_centroids
-        else:
-            raise ValueError
+        self.trainset = self.dataset_cls(self.data_dir,
+                                         split='train',
+                                         tasks=self.tasks,
+                                         transforms=self.train_transforms)
+        self.validset = self.dataset_cls(self.data_dir,
+                                         split='val',
+                                         tasks=self.tasks,
+                                         transforms=self.valid_transforms,
+                                         retname=True)
+        self.normals_centroids = self.trainset.normals_centroids
 
         self.metrics_dict = nn.ModuleDict({
             'semseg': metrics.MeanIoU(num_classes=self.dataset_cls.semseg_num_classes, compute_on_step=False),

@@ -18,7 +18,7 @@ def main(args):
     dm = DataModule(num_duplicates=num_duplicates,
                     **vars(args.datamodule))
     dm.prepare_data()
-    dm.setup('fit')
+    dm.setup()
 
     model = MultiTaskModel(tasks=dm.tasks,
                            task_channel_mapping=dm.task_channel_mapping,
@@ -35,6 +35,7 @@ def main(args):
                          **vars(args.trainer))
 
     trainer.fit(model, datamodule=dm)
+    trainer.test(model, test_dataloaders=dm.val_dataloader())
 
 
 if __name__ == '__main__':

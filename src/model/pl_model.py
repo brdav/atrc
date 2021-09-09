@@ -48,7 +48,7 @@ class MultiTaskModel(pl.LightningModule):
             self.edge_save_dir = os.path.join(self.logger.log_dir, 'edge_preds')
             if self.trainer.is_global_zero:
                 os.makedirs(self.edge_save_dir, exist_ok=True)
-
+    
     def training_step(self, batch, batch_idx):
         image = batch['image']
         targets = {t: batch[t] for t in self.tasks}
@@ -95,6 +95,9 @@ class MultiTaskModel(pl.LightningModule):
             metrics_val[task] = self.metrics_dict[task].compute()
             self.log('_'.join(
                 [task, 'valid', self.metrics_dict[task].__class__.__name__]), metrics_val[task], sync_dist=True)
+
+    test_step = validation_step
+    test_epoch_end = validation_epoch_end
 
     def configure_optimizers(self):
         params = self._get_parameters()

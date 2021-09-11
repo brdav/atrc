@@ -23,6 +23,8 @@ conda install scikit-image==0.17.2
 pip install jsonargparse[signatures]==3.17.0
 ```
 
+**_NOTE_**: PyTorch Lightning is still going through heavy development, so make sure version 1.1.8 is used with this code to avoid issues.
+
 ### Download the Data
 
 Before running the code, download and extract the datasets to any directory `$DATA_DIR`:

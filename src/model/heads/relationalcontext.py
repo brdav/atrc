@@ -87,8 +87,8 @@ class ATRCModule(nn.Module):
                     continue
                 cp_out.append(self.cp_blocks[t][s](target_task_feats=task_specific_feats[t],
                                                    source_task_feats=task_specific_feats[s],
-                                                   target_aux_prob=aux_prob[t],
-                                                   source_aux_prob=aux_prob[s]))
+                                                   target_aux_prob=aux_prob.get(t, None),
+                                                   source_aux_prob=aux_prob.get(s, None)))
             if len(cp_out) > 0:
                 distilled = torch.cat([task_specific_feats[t], self.out_proj[t](torch.cat(cp_out, dim=1))], dim=1)
             else:

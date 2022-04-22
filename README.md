@@ -58,6 +58,9 @@ python ./src/main.py --cfg ./config/nyud/hrnet18/baselinemt.yaml --datamodule.da
 
 The evaluation of boundary detection is disabled, since the MATLAB-based [SEISM](https://github.com/jponttuset/seism) repository was used for obtaining the optimal dataset F-measure scores. Instead, the boundary predictions are simply saved on the disk in this code.
 
+**_NOTE_**: Following previous works for SEISM boundary detection evaluation, we set [maxDist](https://github.com/jponttuset/seism/blob/6af0cad37d40f5b4cbd6ca1d3606ec13b176c351/src/scripts/eval_method.m#L34)=0.0075 for PASCAL-Context and maxDist=0.011 for NYUD-v2.
+
+
 ## Citation
 
 If you find this code useful in your research, please consider citing the paper:

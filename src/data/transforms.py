@@ -296,7 +296,15 @@ class AddIgnoreRegions:
 
 
 class PhotoMetricDistortion:
-    """Apply photometric distortion to image sequentially, every transformation
+    """
+    ---------------------------------------------------------------------------
+    Copyright (c) OpenMMLab. All rights reserved.
+    
+    This source code is licensed under the license found in the
+    LICENSE file in https://github.com/open-mmlab/mmsegmentation.
+    ---------------------------------------------------------------------------
+    
+    Apply photometric distortion to image sequentially, every transformation
     is applied with a probability of 0.5. The position of random contrast is in
     second or second to last.
     1. random brightness

@@ -1,5 +1,3 @@
-""" CUDA code credit: https://github.com/zzd1992/Image-Local-Attention """
-
 import os
 import torch
 from torch.utils import cpp_extension

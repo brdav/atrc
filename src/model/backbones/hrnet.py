@@ -1,5 +1,8 @@
-""" credit: https://github.com/open-mmlab/mmsegmentation """
-
+# Copyright (c) OpenMMLab. All rights reserved.
+#
+# This source code is licensed under the license found in the
+# LICENSE file in https://github.com/open-mmlab/mmsegmentation.
+#
 from typing import Any
 import torch
 import torch.nn as nn

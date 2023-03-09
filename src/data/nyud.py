@@ -1,3 +1,9 @@
+# Copyright (c) Facebook, Inc. and its affiliates.
+# All rights reserved.
+#
+# This source code is licensed under the license found in the
+# LICENSE file in https://github.com/facebookresearch/astmt.
+#
 import os
 import logging
 import numpy as np
@@ -12,7 +18,6 @@ pil_logger.setLevel(logging.INFO)
 
 class NYUD(torch.utils.data.Dataset):
     """
-    credit: https://github.com/facebookresearch/astmt
     NYUD dataset for multi-task learning.
     Includes edge detection, semantic segmentation, surface normals, and depth prediction
     """

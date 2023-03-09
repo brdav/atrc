@@ -1,10 +1,16 @@
+# Copyright (c) Zhendong Zhang.
+# All rights reserved.
+#
+# This source code is modified from 
+# https://github.com/zzd1992/Image-Local-Attention 
+# with permission of the owner.
+#
 import torch
 
 from .ops import locatt_ops
 
 
 class similarFunction(torch.autograd.Function):
-    """ credit: https://github.com/zzd1992/Image-Local-Attention """
 
     @staticmethod
     def forward(ctx, x_ori, x_loc, kH, kW):
@@ -28,7 +34,6 @@ class similarFunction(torch.autograd.Function):
 
 
 class weightingFunction(torch.autograd.Function):
-    """ credit: https://github.com/zzd1992/Image-Local-Attention """
 
     @staticmethod
     def forward(ctx, x_ori, x_weight, kH, kW):

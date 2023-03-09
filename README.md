@@ -73,9 +73,9 @@ If you find this code useful in your research, please consider citing the paper:
 }
 ```
 
-## Credit
+## License
 
-The pretrained backbone weights and code are from [MMSegmentation](https://github.com/open-mmlab/mmsegmentation). The distilled surface normal and saliency labels for PASCAL-Context are from [ASTMT](https://github.com/facebookresearch/astmt). Local attention CUDA kernels are from [this repo](https://github.com/zzd1992/Image-Local-Attention).
+This repository is released under the MIT license. However, care should be taken to adopt appropriate licensing for third-party code in this repository. Third-party code is marked accordingly.
 
 ## Contact
 

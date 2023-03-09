@@ -1,7 +1,10 @@
+// Copyright (c) Zhendong Zhang.
+// All rights reserved.
 //
-// Created by zhang on 20-1-14.
+// This source code is modified from 
+// https://github.com/zzd1992/Image-Local-Attention 
+// with permission of the owner.
 //
-
 #ifndef LOCALATTENTION_LOCALATTENTION_H
 #define LOCALATTENTION_LOCALATTENTION_H
 

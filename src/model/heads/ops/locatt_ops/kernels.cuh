@@ -1,3 +1,10 @@
+// Copyright (c) Zhendong Zhang.
+// All rights reserved.
+//
+// This source code is modified from 
+// https://github.com/zzd1992/Image-Local-Attention 
+// with permission of the owner.
+//
 #include "utils.cuh"
 #include <math.h>
 

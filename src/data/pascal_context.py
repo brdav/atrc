@@ -5,6 +5,10 @@
 # LICENSE file in https://github.com/facebookresearch/astmt.
 #
 import json
+import os
+import sys
+import tarfile
+import urllib
 import cv2
 import numpy as np
 from PIL import Image
@@ -23,6 +27,8 @@ class PASCALContext(torch.utils.data.Dataset):
         4. Surface Normal prediction (distilled),
         5. Saliency (distilled)
     """
+
+    URL = 'https://data.vision.ee.ethz.ch/kmaninis/share/MTL/PASCAL_MT.tgz'
 
     HUMAN_PART = {1: {'hair': 1, 'head': 1, 'lear': 1, 'lebrow': 1, 'leye': 1, 'lfoot': 1,
                       'lhand': 1, 'llarm': 1, 'llleg': 1, 'luarm': 1, 'luleg': 1, 'mouth': 1,
@@ -67,10 +73,15 @@ class PASCALContext(torch.utils.data.Dataset):
                  area_thres=0,
                  retname=True,
                  tasks=('semseg',),
-                 num_human_parts=6):
-        self.root = os.path.join(data_dir, 'PASCALContext')
+                 num_human_parts=6,
+                 download=True):
+        
+        if download:
+            self._download(data_dir)
 
-        centroids_path = os.path.join(data_dir, 'PASCALContext', 'centroids.npy')
+        self.root = os.path.join(data_dir, 'PASCAL_MT')
+
+        centroids_path = os.path.join(os.path.dirname(__file__), 'db_info', 'pascal_centroids.npy')
         if os.path.exists(centroids_path):
             self.normals_centroids = torch.from_numpy(np.load(centroids_path).astype(np.float32))
         else:
@@ -360,6 +371,33 @@ class PASCALContext(torch.utils.data.Dataset):
             for ii in range(1, len(self.im_ids)):
                 outfile.write(',\n\t"{:s}": {:s}'.format(self.im_ids[ii], json.dumps(self.part_obj_dict[self.im_ids[ii]])))
             outfile.write('\n}\n')
+
+    def _download(self, data_dir):
+
+        if not os.path.exists(data_dir):
+            os.makedirs(data_dir)
+
+        _fpath = os.path.join(data_dir, 'PASCAL_MT.tgz')
+
+        if not os.path.isfile(_fpath):
+            def _progress(count, block_size, total_size):
+                sys.stdout.write('\r>> %s %.1f%%' %
+                                 (_fpath, float(count * block_size)
+                                  / float(total_size) * 100.0))
+                sys.stdout.flush()
+
+            urllib.request.urlretrieve(self.URL, _fpath, _progress)
+            print('\n')
+            print('Extracting dataset...')
+
+            # extract file
+            cwd = os.getcwd()
+            tar = tarfile.open(_fpath)
+            os.chdir(data_dir)
+            tar.extractall(path=data_dir)
+            tar.close()
+            os.chdir(cwd)
+            print('Done!')
 
     def __repr__(self):
         return self.__class__.__name__ + '()'

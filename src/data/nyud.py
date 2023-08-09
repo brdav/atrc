@@ -4,8 +4,10 @@
 # This source code is licensed under the license found in the
 # LICENSE file in https://github.com/facebookresearch/astmt.
 #
-import os
 import logging
+import os
+import requests
+import tarfile
 import numpy as np
 from PIL import Image
 import torch
@@ -16,11 +18,44 @@ pil_logger = logging.getLogger('PIL')
 pil_logger.setLevel(logging.INFO)
 
 
+def download_file_from_google_drive(id, destination):
+    """
+    ---------------------------------------------------------------------------
+    Copyright (c) Simon Vandenhende. All rights reserved.
+    
+    This source code is licensed under the license found in the
+    LICENSE file in https://github.com/SimonVandenhende/Multi-Task-Learning-PyTorch.
+    ---------------------------------------------------------------------------
+    """
+    URL = "https://drive.google.com/u/1/uc?export=download"
+    CHUNK_SIZE = 32768
+
+    session = requests.Session()
+
+    # response = session.get(URL, params = { 'id' : id }, stream = True)
+
+    # token = None
+    # for key, value in response.cookies.items():
+    #     if key.startswith('download_warning'):
+    #         token = value
+
+    # if token:
+    params = { 'id' : id, 'confirm' : 1 }
+    response = session.get(URL, params = params, stream = True)
+
+    with open(destination, "wb") as f:
+        for chunk in response.iter_content(CHUNK_SIZE):
+            if chunk: # filter out keep-alive new chunks
+                f.write(chunk)
+
+
 class NYUD(torch.utils.data.Dataset):
     """
     NYUD dataset for multi-task learning.
     Includes edge detection, semantic segmentation, surface normals, and depth prediction
     """
+
+    GOOGLE_DRIVE_ID = '14EAEMXmd3zs2hIMY63UhHPSFPDAkiTzw'
 
     semseg_num_classes = 40
     edge_pos_weight = 0.8
@@ -33,13 +68,18 @@ class NYUD(torch.utils.data.Dataset):
                  split='train',
                  tasks=('semseg',),
                  transforms=None,
-                 retname=False):
-        self.root = os.path.join(data_dir, 'NYUDv2')
+                 retname=False,
+                 download=True):
+
+        if download:
+            self._download(data_dir)
+
+        self.root = os.path.join(data_dir, 'NYUD_MT')
 
         self.transforms = transforms
         self.retname = retname
 
-        centroids_path = os.path.join(data_dir, 'NYUDv2', 'centroids.npy')
+        centroids_path = os.path.join(os.path.dirname(__file__), 'db_info', 'nyu_centroids.npy')
         if os.path.exists(centroids_path):
             self.normals_centroids = torch.from_numpy(np.load(centroids_path).astype(np.float32))
         else:
@@ -80,13 +120,13 @@ class NYUD(torch.utils.data.Dataset):
         for line in lines:
 
             # Images
-            _image = os.path.join(_image_dir, line + '.png')
+            _image = os.path.join(_image_dir, line + '.jpg')
             assert os.path.isfile(_image)
             self.images.append(_image)
             self.im_ids.append(line.rstrip('\n'))
 
             # Edges
-            _edge = os.path.join(_edge_gt_dir, line + '.png')
+            _edge = os.path.join(_edge_gt_dir, line + '.npy')
             assert os.path.isfile(_edge)
             self.edges.append(_edge)
 
@@ -95,7 +135,7 @@ class NYUD(torch.utils.data.Dataset):
             assert os.path.isfile(_semseg)
             self.semsegs.append(_semseg)
 
-            _normal = os.path.join(_normal_gt_dir, line + '.png')
+            _normal = os.path.join(_normal_gt_dir, line + '.npy')
             assert os.path.isfile(_normal)
             self.normals.append(_normal)
 
@@ -152,8 +192,8 @@ class NYUD(torch.utils.data.Dataset):
         return _img
 
     def _load_edge(self, index):
-        _edge = Image.open(self.edges[index])
-        _edge = np.expand_dims(np.array(_edge, dtype=np.float32, copy=False), axis=2) / 255.
+        _edge = np.load(self.edges[index])
+        _edge = np.expand_dims(_edge.astype(np.float32), axis=2)
         return _edge
 
     def _load_semseg(self, index):
@@ -164,14 +204,37 @@ class NYUD(torch.utils.data.Dataset):
         return _semseg
 
     def _load_normals(self, index):
-        _normals = Image.open(self.normals[index])
-        _normals = 2 * np.array(_normals, dtype=np.float32, copy=False) / 255. - 1
+        _normals = np.load(self.normals[index])
         return _normals
 
     def _load_depth(self, index):
         _depth = np.load(self.depths[index])
         _depth = np.expand_dims(_depth.astype(np.float32), axis=2)
         return _depth
+    
+    def _download(self, data_dir):
+
+        if not os.path.exists(data_dir):
+            os.makedirs(data_dir)
+
+        _fpath = os.path.join(data_dir, 'NYUD_MT.tgz')
+
+        if os.path.isfile(_fpath):
+            return
+        else:
+            print('Downloading from google drive')
+            os.makedirs(os.path.dirname(_fpath), exist_ok=True)
+            download_file_from_google_drive(self.GOOGLE_DRIVE_ID, _fpath)
+
+        # extract file
+        cwd = os.getcwd()
+        print('\nExtracting tar file')
+        tar = tarfile.open(_fpath)
+        os.chdir(data_dir)
+        tar.extractall()
+        tar.close()
+        os.chdir(cwd)
+        print('Done!')
 
     def __repr__(self):
         return self.__class__.__name__ + '()'

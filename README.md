@@ -25,35 +25,26 @@ pip install jsonargparse[signatures]==3.17.0
 
 **_NOTE_**: PyTorch Lightning is still going through heavy development, so make sure version 1.1.8 is used with this code to avoid issues.
 
-### Download the Data
-
-Before running the code, download and extract the datasets to any directory `$DATA_DIR`:
-```bash
-wget https://data.vision.ee.ethz.ch/brdavid/atrc/NYUDv2.tar.gz -P $DATA_DIR
-wget https://data.vision.ee.ethz.ch/brdavid/atrc/PASCALContext.tar.gz -P $DATA_DIR
-tar xfvz $DATA_DIR/NYUDv2.tar.gz -C $DATA_DIR && rm $DATA_DIR/NYUDv2.tar.gz
-tar xfvz $DATA_DIR/PASCALContext.tar.gz -C $DATA_DIR && rm $DATA_DIR/PASCALContext.tar.gz
-```
 
 ### ATRC Search
 
 To start an ATRC search on NYUD-v2 with a HRNetV2-W18-small backbone, use for example:
 ```bash
-python ./src/main_search.py --cfg ./config/nyud/hrnet18/atrc_search.yaml --datamodule.data_dir $DATA_DIR --trainer.gpus 2 --trainer.accelerator ddp
+python ./src/main_search.py --cfg ./config/nyud/hrnet18/atrc_search.yaml --datamodule.data_dir . --trainer.gpus 2 --trainer.accelerator ddp
 ```
-The path to the data directory `$DATA_DIR` needs to be provided. With every validation epoch, the current ATRC configuration is saved as a `atrc_genotype.json` file in the log directory.
+The path to the data directory can be customized with `--datamodule.data_dir`. The data is downloaded automatically on the first run. With every validation epoch, the current ATRC configuration is saved as a `atrc_genotype.json` file in the log directory.
 
 ### Multi-Modal Distillation Network Training
 
 To train ATRC distillation networks supply the path to the corresponding `atrc_genotype.json`, e.g., `$GENOTYPE_DIR`: 
 ```bash
-python ./src/main.py --cfg ./config/nyud/hrnet18/atrc.yaml --model.atrc_genotype_path $GENOTYPE_DIR/atrc_genotype.json --datamodule.data_dir $DATA_DIR --trainer.gpus 1
+python ./src/main.py --cfg ./config/nyud/hrnet18/atrc.yaml --model.atrc_genotype_path $GENOTYPE_DIR/atrc_genotype.json --datamodule.data_dir . --trainer.gpus 1
 ```
 Some genotype files can be found under `genotypes/`.
 
 Baselines can be run by selecting the config file, e.g., multi-task learning baseline:
 ```bash
-python ./src/main.py --cfg ./config/nyud/hrnet18/baselinemt.yaml --datamodule.data_dir $DATA_DIR --trainer.gpus 1
+python ./src/main.py --cfg ./config/nyud/hrnet18/baselinemt.yaml --datamodule.data_dir . --trainer.gpus 1
 ```
 
 The evaluation of boundary detection is disabled, since the MATLAB-based [SEISM](https://github.com/jponttuset/seism) repository was used for obtaining the optimal dataset F-measure scores. Instead, the boundary predictions are simply saved on the disk in this code.
@@ -76,7 +67,3 @@ If you find this code useful in your research, please consider citing the paper:
 ## License
 
 This repository is released under the MIT license. However, care should be taken to adopt appropriate licensing for third-party code in this repository. Third-party code is marked accordingly.
-
-## Contact
-
-For questions about the code or paper, feel free to contact me ([send email](mailto:brdavid@vision.ee.ethz.ch)).
